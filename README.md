@@ -29,12 +29,12 @@ Then create the container with the following command.
 ```
 docker run -d --privileged \
   --name=apcupsd  \
-  -e TZ=Europe/London \
+  -e TZ=US/Mountain \
   --device=/dev/usb/hiddev0 \
   --restart unless-stopped \
   -p=3551:3551 \
   -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket \
-  -v /data/config:/etc/apcupsd
+  -v /data/apcupsd:/etc/apcupsd
   bnhf/apcupsd:latest
 ```
 
