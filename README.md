@@ -30,12 +30,12 @@ Then create the container with the following command.
 docker run -d --privileged \
   --name=apcupsd  \
   -e TZ=Europe/London \
-  --device=/dev/usb/hiddev1 \
+  --device=/dev/usb/hiddev0 \
   --restart unless-stopped \
   -p=3551:3551 \
   -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket \
-  -v apcupsd_config:/etc/apcupsd
-  gregewing/apcupsd:latest
+  -v /data/config:/etc/apcupsd
+  bnhf/apcupsd:latest
 ```
 
 And, for those using tools with docker-compose, here's an example:
@@ -44,24 +44,32 @@ And, for those using tools with docker-compose, here's an example:
 version: '3.7'
 services:
   apcupsd:
-    image: gregewing/apcupsd:latest
+    image: bnhf/apcupsd:latest
     container_name: apcupsd
     devices:
-      - /dev/usb/hiddev0
+      - /dev/usb/hiddev0 # This device needs to match what the APC UPS on your APCUPSD_MASTER system uses -- Comment out this section on APCUPSD_SLAVES
     ports:
       - 3551:3551
-    environment: # Delete or comment out any environment variables you don't wish to change
-      - UPSNAME=${UPSNAME} # This value will display in apcupsd-cgi details.
-      - UPSCABLE=${UPSCABLE} # Default value is usb
-      - UPSTYPE=${UPSTYPE} # Default value is usb
-      - DEVICE=${DEVICE} # Default value is <blank>
-      - NETSERVER=${NETSERVER} # Default value is on
-      - NISIP=${NISIP} # Default value is 0.0.0.0
-      - TZ=${TZ} # Default value is Europe/London
+    environment:
+      - UPSNAME=${UPSNAME} # Sets a name for the UPS (1 to 8 chars), that will be used by System Tray notifications, apcupsd-cgi and Grafana dashboards
+#      - UPSCABLE=${UPSCABLE} # Usually doesn't need to be changed on system connected to UPS. (default=usb) On APCUPSD_SLAVES set the value to ether
+#      - UPSTYPE=${UPSTYPE} # Usually doesn't need to be changed on system connected to UPS. (default=usb) On APCUPSD_SLAVES set the value to net
+#      - DEVICE=${DEVICE} # Use this only on APCUPSD_SLAVES to set the hostname or IP address of the APCUPSD_MASTER with the listening port (:3551)
+#      - POLLTIME=${POLLTIME} # Interval (in seconds) at which apcupsd polls the UPS for status (default=60)
+      - ONBATTERYDELAY=${ONBATTERYDELAY} # Sets the time in seconds from when a power failure is detected until an onbattery event is initiated (default=6)
+      - BATTERYLEVEL=${BATTERYLEVEL} # Sets the daemon to send the poweroff signal when the UPS reports a battery level of x% or less (default=5)
+      - MINUTES=${MINUTES} # Sets the daemon to send the poweroff signal when the UPS has x minutes or less remaining power (default=5)
+      - TIMEOUT=${TIMEOUT} # Sets the daemon to send the poweroff signal when the UPS has been ON battery power for x seconds (default=0)
+      - SELFTEST=${SELFTEST} # Sets the daemon to ask the UPS to perform a self test every x hours (default=336)
+#      - APCUPSD_SLAVES=${APCUPSD_SLAVES} # If this is the APCUPSD_MASTER, then enter the APUPSD_SLAVES list here (space separated)
+      - TZ=${TZ}
     volumes:
-      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
-      - apcupsd_config:/etc/apcupsd
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # Required to support host shutdown from the container
+      - /data/apcupsd:/etc/apcupsd # /etc/apcupsd can be bound to a directory or a docker volume
     restart: unless-stopped
+# volumes: # Use this section for volume bindings only
+#   config: # The name of the stack will be appended to the beginning of this volume name, if the volume doesn't already exist
+#     external: true # Use this directive if you created the docker volume in advance
 ```
 Environment variables can be hardcoded into the above docker-compose, or added in the environment section of tool like Portainer. 
 
