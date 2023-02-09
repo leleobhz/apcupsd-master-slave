@@ -32,4 +32,23 @@ for i in ${settings[@]}
     fi
   done
 
+# if $APCUPSD_HOSTS exists thendelete existing hosts.conf, and recreate with specified values
+if [ ! -z "$APCUPSD_HOSTS" ]; then
+  rm /etc/apcupsd/hosts.conf \
+  && touch /etc/apcupsd/hosts.conf
+fi
+
+# populate two arrays with host and UPS names
+HOSTS=( $APCUPSD_HOSTS )
+NAMES=( $APCUPSD_NAMES )
+
+# add monitors to hosts.conf for each host and UPS name combo
+for ((i=0;i<${#HOSTS[@]};i++))
+  do
+    if [ ! -z $i ]; then
+      echo "MONITOR ${HOSTS[$i]} \"${NAMES[$i]}\"" >> /etc/apcupsd/hosts.conf \
+      && echo "MONITOR ${HOSTS[$i]} \"${NAMES[$i]}\""
+    fi
+  done
+
 /sbin/apcupsd -b

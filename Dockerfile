@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-LABEL Greg Ewing (https://github.com/gregewing)
+LABEL Scott Ueland (https://github.com/bnhf)
 ENV LANG=C.UTF-8 DEBIAN_FRONTEND=noninteractive
 
 RUN echo Starting. \
