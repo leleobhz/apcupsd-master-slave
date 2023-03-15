@@ -18,11 +18,14 @@ for i in "${files[@]}"
     fi
   done
 
-# First, add an extra # to the second UPSNAME used for EPROM updates
+# First, if not previously done, add an extra # to the second UPSNAME used for EPROM updates
 sed -i 's/^#UPSNAME UPS_IDEN/##UPSNAME UPS_IDEN/' /etc/apcupsd/apcupsd.conf
 
+# Second, if not previously done, change EVENTSFILE location to /etc/apcupsd for ease of viewing
+sed -i 's|^EVENTSFILE /var/log/apcupsd.events|EVENTSFILE /etc/apcupsd/apcupsd.events|' /etc/apcupsd/apcupsd.conf
+
 # Check if environment variables are set, and if so update apcupsd.conf
-settings=( "UPSNAME" "UPSCABLE" "UPSTYPE" "DEVICE" "POLLTIME" "NETSERVER" "NISIP" "NISPORT" "ONBATTERYDELAY" "BATTERYLEVEL" "MINUTES" "TIMEOUT" "SELFTEST" )
+settings=( "UPSNAME" "UPSCABLE" "UPSTYPE" "DEVICE" "POLLTIME" "ONBATTERYDELAY" "BATTERYLEVEL" "MINUTES" "TIMEOUT" "KILLDELAY" "NETSERVER" "NISIP" "NISPORT" "SELFTEST" )
 
 for i in ${settings[@]}
   do

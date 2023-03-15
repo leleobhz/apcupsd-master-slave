@@ -38,6 +38,7 @@ services:
 #      - BATTERYLEVEL=${BATTERYLEVEL} # Sets the daemon to send the poweroff signal when the UPS reports a battery level of x% or less (default=5)
 #      - MINUTES=${MINUTES} # Sets the daemon to send the poweroff signal when the UPS has x minutes or less remaining power (default=5)
 #      - TIMEOUT=${TIMEOUT} # Sets the daemon to send the poweroff signal when the UPS has been ON battery power for x seconds (default=0)
+#      - KILLDELAY=${KILLDELAY} # If non-zero, sets the daemon to attempt to turn the UPS off x seconds after sending a shutdown request (default=0)
 #      - SELFTEST=${SELFTEST} # Sets the daemon to ask the UPS to perform a self test every x hours (default=336)
 #      - APCUPSD_HOSTS=${APCUPSD_HOSTS} # If this is the MASTER, then enter the APUPSD_HOSTS list here, including this system (space separated)
 #      - APCUPSD_NAMES=${APCUPSD_NAMES} # Match the order of this list one-to-one to APCUPSD_HOSTS list, including this system (space separated)
@@ -68,6 +69,7 @@ ONBATTERYDELAY=${ONBATTERYDELAY}
 BATTERYLEVEL=${BATTERYLEVEL}
 MINUTES=${MINUTES}
 TIMEOUT=${TIMEOUT}
+KILLDELAY=${KILLDELAY}
 SELFTEST=${SELFTEST} 
 APCUPSD_HOSTS=${APCUPSD_HOSTS}
 APCUPSD_NAMES=${APCUPSD_NAMES}
