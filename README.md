@@ -22,7 +22,7 @@ Below is the "full" annotated docker-compose for Portainer-Stacks, for use with 
 version: '3.7'
 services:
   apcupsd:
-    image: bnhf/apcupsd:latest
+    image: quay.io/pqatsi/apcupsd:latest
     container_name: apcupsd
     devices:
       - /dev/usb/hiddev0 # This device needs to match what the APC UPS on your APCUPSD_MASTER system uses -- Comment out this section on APCUPSD_SLAVES
@@ -82,7 +82,7 @@ TZ=${TZ}
 version: '3.7'
 services:
   apcupsd:
-    image: bnhf/apcupsd:latest
+    image: quay.io/pqatsi/apcupsd:latest
     container_name: apcupsd
     devices:
       - /dev/usb/hiddev0 # This device needs to match what the APC UPS on your STANDALONE system uses
@@ -109,7 +109,7 @@ services:
 version: '3.7'
 services:
   apcupsd:
-    image: bnhf/apcupsd:latest
+    image: quay.io/pqatsi/apcupsd:latest
     container_name: apcupsd
     devices:
       - /dev/usb/hiddev0 # This device needs to match what the APC UPS on your APCUPSD_MASTER system uses
@@ -143,7 +143,7 @@ services:
 version: '3.7'
 services:
   apcupsd:
-    image: bnhf/apcupsd:latest
+    image: quay.io/pqatsi/apcupsd:latest
     container_name: apcupsd
     ports:
       - 3551:3551

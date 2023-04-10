@@ -1,17 +1,24 @@
-FROM ubuntu:latest
-LABEL Scott Ueland (https://github.com/bnhf)
-ENV LANG=C.UTF-8 DEBIAN_FRONTEND=noninteractive
+FROM registry.access.redhat.com/ubi9-minimal:latest
 
-RUN echo Starting. \
- && apt-get -q -y update \
- && apt-get -q -y install --no-install-recommends apcupsd dbus libapparmor1 libdbus-1-3 libexpat1 tzdata \
- && apt-get -q -y full-upgrade \
- && rm -rif /var/lib/apt/lists/* \
+LABEL "creator"="Scott Ueland (https://github.com/bnhf)"
+LABEL "mantainer"="Leonardo Amaral (https://github.com/leleobhz)"
+
+ENV LANG=C.UTF-8
+
+RUN rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://dl.rockylinux.org/pub/rocky/9/AppStream/x86_64/os/Packages/l/libusb-0.1.7-5.el9.$(rpm --eval '%{_arch}').rpm \
+ && microdnf --setopt=tsflags=nodocs --setopt=install_weak_deps=0 -y install tzdata apcupsd dbus-tools \
+ && microdnf -y remove epel-release \
+ && rm -rf /var/cache/yum /var/lib/dnf \
  && mkdir /opt/apcupsd \
- && mv /etc/apcupsd/* /opt/apcupsd \
- && echo Finished.
+ && mv /etc/apcupsd/* /opt/apcupsd
 
 COPY scripts /opt/apcupsd
 COPY start.sh /
 
-CMD /start.sh
+# Add Tini
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini /start.sh
+
+ENTRYPOINT ["/tini", "--"]
+CMD ["/start.sh"]
